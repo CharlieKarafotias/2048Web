@@ -36,7 +36,7 @@ function spawn_new_number_block(board: (number | null)[]): (number | null)[] {
             available_spots.push(idx);
         }
     });
-    
+
     if (available_spots.length > 0) {
         let idx_on_board_to_update = Math.floor(Math.random() * available_spots.length);
         board[available_spots[idx_on_board_to_update]] = 2;
@@ -60,29 +60,29 @@ function shift_row(row: (number | null)[], l_to_r: boolean): (number | null)[] {
     console.log('shift row');
     let updated_row = row.filter(x => x !== null);
     let done = false;
-    
+
     if (l_to_r) {
         let i = updated_row.length - 1;
         while (!done && i >= 1) {
             let curr = updated_row[i];
-            let prev = updated_row[i-1];
+            let prev = updated_row[i - 1];
             if (isCombinable(prev, curr)) {
                 updated_row[i] = nextNumber(curr!);
-                updated_row.splice(i-1, 1);
+                updated_row.splice(i - 1, 1);
                 done = true;
             }
             i -= 1;
         }
-        
+
         return fill_deleted(updated_row, 4, true);
     } else {
         let i = 0;
-        while (!done && i+1 < updated_row.length) {
+        while (!done && i + 1 < updated_row.length) {
             let curr = updated_row[i];
-            let next = updated_row[i+1];
+            let next = updated_row[i + 1];
             if (isCombinable(curr, next)) {
                 updated_row[i] = nextNumber(curr!);
-                updated_row.splice(i+1, 1);
+                updated_row.splice(i + 1, 1);
                 done = true;
             }
             i += 1;
@@ -91,27 +91,19 @@ function shift_row(row: (number | null)[], l_to_r: boolean): (number | null)[] {
     }
 }
 
-function transpose(array: any[]): any[] {
-    if (Array.isArray(array[0])) {
-        let transposed = Array(array[0].length).fill([]);
-        let flattened = array.flat();
-        flattened.forEach((elem, idx) => {
-            transposed[idx % array[0].length].push(elem);
-        });
-        return transposed;
-    } else {
-        return array;
-    }
+function transpose<T>(array: T[][]): T[][] {
+    return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
 }
 
-function flatten(array: any[]): any[] {
-    return array.flat();
+function flatten<T>(arr: T[][]): T[] {
+    return ([] as T[]).concat(...arr);
 }
 
 export function player_move(board: (number | null)[], input: string): (number | null)[] {
+    let rows: (number | null)[][] = [[], [], [], []];
+    let columns: (number | null)[][] = [[], [], [], []];
     switch (input.toLowerCase()) {
         case 'up':
-            let columns: (number | null)[][] = [[], [], [], []]; 
             board.forEach((elem, idx) => {
                 columns[idx % columns.length].push(elem);
             });
@@ -121,7 +113,6 @@ export function player_move(board: (number | null)[], input: string): (number | 
             board = flatten(transpose(columns));
             break;
         case 'down':
-            columns = [[], [], [], []]; 
             board.forEach((elem, idx) => {
                 columns[idx % columns.length].push(elem);
             });
@@ -131,7 +122,6 @@ export function player_move(board: (number | null)[], input: string): (number | 
             board = flatten(transpose(columns));
             break;
         case 'left':
-            let rows: (number | null)[][] = [[], [], [], []]; 
             board.forEach((elem, idx) => {
                 rows[Math.floor(idx / rows.length)].push(elem);
             });
@@ -141,7 +131,6 @@ export function player_move(board: (number | null)[], input: string): (number | 
             board = flatten(rows);
             break;
         case 'right':
-            rows = [[], [], [], []]; 
             board.forEach((elem, idx) => {
                 rows[Math.floor(idx / rows.length)].push(elem);
             });
