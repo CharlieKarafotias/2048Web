@@ -140,19 +140,6 @@ export function player_move(board: (number | null)[], input: string): (number | 
             board = flatten(rows);
             break;
     }
-    return board;
+    return spawn_new_number_block(board);
 }
 
-// Graphics
-function print_board(board: (number | null)[], split_on = 4): void {
-    let rows: (number | null)[][] = [];
-    let i = 0;
-    while (i < board.length) {
-        rows.push(board.slice(i, split_on + i));
-        i += split_on;
-    }
-    for (let r of rows) {
-        console.log(r);
-    }
-    console.log();
-}
